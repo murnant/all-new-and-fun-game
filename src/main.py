@@ -277,7 +277,8 @@ while True:
             enemy.update(screen)
         for enemy in enemies:
             if enemy.hitbox.colliderect(enemy_trasher):
-                enemies.remove(enemy)
+                #enemies.remove(enemy)
+                enemy.hot = 255
         for enemy in enemies:
             if enemy.hitbox.colliderect(hitbox) and enemy.hot <= 0:
                 running = False
