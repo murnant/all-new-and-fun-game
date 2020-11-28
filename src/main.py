@@ -42,6 +42,21 @@ class Enemy():
                 pygame.draw.rect(screen, (255, self.hot, 0), self.hitbox)
             else:
                 pygame.draw.rect(screen, (255, 0, 0), self.hitbox)
+
+speed_of_game = 50
+class Setting():
+    def __init__(self, x, y, do):
+        self.x = x
+        self.y = y
+        self.do = do
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 30)
+        
+    def update(self, screen):
+        if pygame.mouse.get_pressed()[0] and self.hitbox.colliderect(mouse_clicker):
+            self.do()
+        pygame.draw.rect(screen, (255, 255, 0), self.hitbox)
+
+            
         
 size = 40
 ray_on = True
@@ -53,7 +68,7 @@ hp_bar2 = pygame.Rect(60, 0, 25, 25)
 hp_bar3 = pygame.Rect(90, 0, 25, 25)
 hp = 3
 enemy_trasher = pygame.Rect(0, game_height, game_width, 10)
-
+mouse_clicker = pygame.Rect(0, 0, 1, 1)
 
 score = 0
 
@@ -62,6 +77,9 @@ high_score = int(f.read())
 f.close()
 
 enemies = []
+def speed_up(self):
+    speed_of_game += 1000
+settings = [Setting(30, 30, speed_up)]
 
 # ***************** Loop Land Below *****************
 # Everything under 'while running' will be repeated over and over again
@@ -75,6 +93,10 @@ while True:
             running = False
 
     screen.fill((0,0,0))
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+    mouse_clicker.x = mouse_x
+    mouse_clicker.y = mouse_y
 
     pygame.draw.rect(screen, (255, 0, 0), hitbox)
     pygame.draw.rect(screen, (255, 255, 0), enemy_hitbox)
@@ -283,6 +305,9 @@ while True:
             if enemy.hitbox.colliderect(hitbox) and enemy.hot <= 0:
                 running = False
                 enemies.remove(enemy)
+        #update setting
+        for setting in settings :
+            setting.update(screen)
 
     #end cod
     else:
@@ -310,5 +335,5 @@ while True:
 
     # Tell pygame to update the screen
     pygame.display.flip()
-    clock.tick(50)
+    clock.tick(speed_of_game)
     pygame.display.set_caption("MY GAME fps: " + str(clock.get_fps()))
