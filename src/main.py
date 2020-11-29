@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Start the game
 pygame.init()
@@ -25,6 +26,7 @@ class Enemy():
         self.v_x = 0
         self.v_y = 0
         self.hot = 255
+        self.particles = []
         self.hitbox = pygame.Rect(self.x, self.y, enemy_size, enemy_size)
         
 
@@ -42,6 +44,34 @@ class Enemy():
                 pygame.draw.rect(screen, (255, self.hot, 0), self.hitbox)
             else:
                 pygame.draw.rect(screen, (255, 0, 0), self.hitbox)
+                self.particles.append(Particle(self.x +enemy_size /2, self.y +enemy_size /2))
+            for particle in self.particles:
+                particle.update(screen)
+                if particle.time_to_live <= 0:
+                    self.particles.remove(particle)
+                
+
+class Particle():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.v_x = random.randint(-3,2)
+        self.v_y = random.randint(-3,2)
+        self.time_to_live = 10
+        self.hitbox = pygame.Rect(self.x, self.y, enemy_size, enemy_size)
+        
+
+    def update(self, screen):
+        self.time_to_live -= 1
+        self.v_x *= 0.93
+        self.v_y *= 0.93
+        self.x += self.v_x
+        self.y += self.v_y
+        self.hitbox = pygame.Rect(self.x, self.y, 2.5, 2.5)
+        pygame.draw.rect(screen, (230, 0, 230), self.hitbox)
+
+
+
 
 speed_of_game = 50
 class Setting():
@@ -52,9 +82,10 @@ class Setting():
         self.hitbox = pygame.Rect(self.x, self.y, 30, 30)
         
     def update(self, screen):
-        if pygame.mouse.get_pressed()[0] and self.hitbox.colliderect(mouse_clicker):
-            self.do()
-        pygame.draw.rect(screen, (255, 255, 0), self.hitbox)
+        if settings_on:
+            if pygame.mouse.get_pressed()[0] and self.hitbox.colliderect(mouse_clicker):
+                self.do()
+            pygame.draw.rect(screen, (255, 255, 0), self.hitbox)
 
             
         
@@ -69,7 +100,7 @@ hp_bar3 = pygame.Rect(90, 0, 25, 25)
 hp = 3
 enemy_trasher = pygame.Rect(0, game_height, game_width, 10)
 mouse_clicker = pygame.Rect(0, 0, 1, 1)
-
+settings_on = False
 score = 0
 
 f = open("high_score", "r")
@@ -77,9 +108,13 @@ high_score = int(f.read())
 f.close()
 
 enemies = []
-def speed_up(self):
-    speed_of_game += 1000
-settings = [Setting(30, 30, speed_up)]
+def speed_up():
+    global speed_of_game
+    speed_of_game += 1
+def speed_down():
+    global speed_of_game
+    speed_of_game -= 1
+settings = [Setting(30, 30, speed_up), Setting(65, 30, speed_down)]
 
 # ***************** Loop Land Below *****************
 # Everything under 'while running' will be repeated over and over again
@@ -87,16 +122,20 @@ while True:
     keys = pygame.key.get_pressed()
     # Makes the game stop if the player clicks the X or presses esc
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or keys[pygame.K_SPACE]:
+        if event.type == pygame.QUIT:
+            settings_on = True
+        if keys[pygame.K_SPACE]:
             running = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            running = False
+            settings_on = False
+
 
     screen.fill((0,0,0))
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
     mouse_clicker.x = mouse_x
     mouse_clicker.y = mouse_y
+    
 
     pygame.draw.rect(screen, (255, 0, 0), hitbox)
     pygame.draw.rect(screen, (255, 255, 0), enemy_hitbox)
@@ -111,14 +150,14 @@ while True:
     score_font = pygame.font.SysFont("mvboli", 30)
     score_text = score_font.render("Score :"+str(score), True, (255,0,255))
 
-
+    
     if enemy_hitbox.colliderect(hitbox):
         score += 1
         enemies.append(Enemy(enemy_hitbox.x, enemy_hitbox.y))
 
 
     screen.blit(score_text, (30, 60))
-    if running:
+    if running and not settings_on:
         #move code
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             v_x += 1
@@ -305,12 +344,10 @@ while True:
             if enemy.hitbox.colliderect(hitbox) and enemy.hot <= 0:
                 running = False
                 enemies.remove(enemy)
-        #update setting
-        for setting in settings :
-            setting.update(screen)
+
 
     #end cod
-    else:
+    elif not settings_on:
         for enemy in enemies:
             enemies.remove(enemy)
         score = 0
@@ -331,6 +368,13 @@ while True:
         enemy_trasher.y = game_height
 
     screen.blit(high_score_text, (0, 30))
+    if settings_on:
+        screen.fill((255,255,255))
+        
+    #update setting
+    for setting in settings:
+        setting.update(screen)
+    
 
 
     # Tell pygame to update the screen
