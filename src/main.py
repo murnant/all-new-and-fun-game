@@ -92,8 +92,8 @@ class Setting():
 size = 40
 ray_on = True
 ray = 120
-hitbox = pygame.Rect(game_width / 2 - size / 2,600, size, size)
-enemy_hitbox = pygame.Rect(game_width / 2 - enemy_size / 2, 450, enemy_size, enemy_size)
+hitbox = pygame.Rect(game_width / 2 - size / 2,game_height - 50, size, size)
+enemy_hitbox = pygame.Rect(game_width / 2 - enemy_size / 2, game_height - 50, enemy_size, enemy_size)
 hp_bar = pygame.Rect(30, 0, 25, 25)
 hp_bar2 = pygame.Rect(60, 0, 25, 25)
 hp_bar3 = pygame.Rect(90, 0, 25, 25)
@@ -409,12 +409,12 @@ while True:
         hp = 3
         
         hitbox.x = game_width / 2 - size / 2
-        hitbox.y = 600
+        hitbox.y = game_height - 50
         v_y = 0
         v_x = 0
         
         enemy_hitbox.x = game_width / 2 - enemy_size / 2
-        enemy_hitbox.y = 450
+        enemy_hitbox.y = game_height - 200
         enemy_v_y = 0
         enemy_v_x = 0
         ray_on = True
