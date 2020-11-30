@@ -114,7 +114,16 @@ def speed_up():
 def speed_down():
     global speed_of_game
     speed_of_game -= 1
-settings = [Setting(30, 30, speed_up), Setting(65, 30, speed_down)]
+def game_width_up():
+    global game_width
+    game_width += 10
+    screen = pygame.display.set_mode((game_width, game_height))
+def game_width_down():
+    global game_width
+    game_width -= 10
+    screen = pygame.display.set_mode((game_width, game_height))
+    
+settings = [Setting(30, 30, speed_up), Setting(65, 30, speed_down), Setting(200, 30, game_width_up), Setting(235, 30, game_width_down)]
 
 # ***************** Loop Land Below *****************
 # Everything under 'while running' will be repeated over and over again
