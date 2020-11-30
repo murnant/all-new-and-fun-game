@@ -116,12 +116,32 @@ def speed_down():
     speed_of_game -= 1
 def game_width_up():
     global game_width
+    global screen_border_Y
+    global screen_border_Y2
+    global screen_border_x
+    global screen_border_x2
+    global enemy_trasher
     game_width += 10
     screen = pygame.display.set_mode((game_width, game_height))
+    screen_border_Y = pygame.Rect(0, -1, game_width, 1)
+    screen_border_Y2 = pygame.Rect(0, game_height, game_width, 1)
+    screen_border_x = pygame.Rect(0, -1, 1, game_height)
+    screen_border_x2 = pygame.Rect(game_width, 0, 1, game_height)
+    enemy_trasher = pygame.Rect(0, game_height, game_width, 10)
 def game_width_down():
     global game_width
+    global screen_border_Y
+    global screen_border_Y2
+    global screen_border_x
+    global screen_border_x2
+    global enemy_trasher
     game_width -= 10
     screen = pygame.display.set_mode((game_width, game_height))
+    screen_border_Y = pygame.Rect(0, -1, game_width, 1)
+    screen_border_Y2 = pygame.Rect(0, game_height, game_width, 1)
+    screen_border_x = pygame.Rect(0, -1, 1, game_height)
+    screen_border_x2 = pygame.Rect(game_width, 0, 1, game_height)
+    enemy_trasher = pygame.Rect(0, game_height, game_width, 10)
     
 settings = [Setting(30, 30, speed_up), Setting(65, 30, speed_down), Setting(200, 30, game_width_up), Setting(235, 30, game_width_down)]
 
