@@ -3,7 +3,7 @@ import os
 
 # Start the game
 pygame.init()
-game_width = 1000
+game_width = 1000   
 game_height = 650
 screen = pygame.display.set_mode((game_width, game_height))
 running = True
@@ -13,8 +13,9 @@ class Camera:
         self.x = x
         self.y = y
 
-    def blit(self, pic):
-        pass
+    def blit(self, pic, p):
+        x,y = p
+        screen.blit(pic, (x -self.x, y -self.y))
 
     # def rect(self, rect, color):
     #     rect = rect.                # move rectangle before drawing.
@@ -27,13 +28,28 @@ cam = Camera(0,0)
 
 size = 10
 player = pygame.Rect( (game_width - size) / 2, (game_height-size) /2, size, size)
-snake = pygame.Rect(0, 0, 150, 150)
-print(os.getcwd())
-snake_pic = pygame.image.load("tremmer\Tremor Scales.png")
-snake_pic_small = pygame.transform.scale(snake_pic, (150,150))
-snake_pic_small.set_colorkey((255,255,255))
 
-speed = 1
+
+class Snake:
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+        self.hitbox = pygame.Rect(0, 0, 150, 150)
+        self.pic = pygame.image.load("tremmer\Tremor Scales.png")
+        self.pic_small = pygame.transform.scale(self.pic, (150,150))
+        self.pic_small.set_colorkey((255,255,255))
+
+    def draw(self):
+        cam.blit(self.pic_small , (self.x , self.y))
+
+
+
+snake = []
+
+for i in range (0,5):
+    snake.append(Snake(300,300 + i *100))
+
+speed = 0.1
 
 
 
@@ -47,8 +63,10 @@ while running:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
     screen.fill((102, 51, 0))
-    screen.blit(snake_pic_small, (snake.x, snake.y))
     pygame.draw.rect(screen,(255,255,255),player)
+    for s in snake:
+        s.draw()
+
 
     
     if pygame.mouse.get_pressed()[0]:
